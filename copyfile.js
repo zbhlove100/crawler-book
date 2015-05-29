@@ -86,4 +86,4 @@ function copydir(source,target){
   })
 }
 //copydir("./picture16","./picture16_bk")
-copylist("./picture17_bk/","./picture17/")
+copydir("./bookcover/","./uploadcover/")

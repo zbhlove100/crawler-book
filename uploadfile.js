@@ -12,7 +12,7 @@ var oss = new ossApi.OssClient(option);
 
 function uploadfiletooss(bucket,file,folder){
   var filename = folder+ "/" + file
-  oss.putObject(bucket, file+".jpg", filename, function(err,result) {
+  oss.putObject(bucket, file, filename, function(err,result) {
     if(err){
       console.log("upload err:"+file+"\n" +err)
     }
@@ -38,12 +38,12 @@ function readdir(path){
         }
       })*/
       if(files.length>0){
-        uploadfiletooss("recipe", files[0], path)
+        uploadfiletooss("bookcover", files[0], path)
       }
       ep.tail("finishdelete", function(par){
         start = start +1;
         if(files.length > start){
-          uploadfiletooss("recipe", files[start], path)
+          uploadfiletooss("bookcover", files[start], path)
         }
       })
   })
@@ -84,4 +84,4 @@ function deletefile(filename){
     
   })
 }
-readdir("./picture17")
+readdir("./uploadcover")
