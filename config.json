@@ -1,0 +1,14 @@
+{
+	"db":"127.0.0.1:8091",
+	"user":"root",
+	"password":"zbhxzz",
+	"detailbucket":"crawler-book",
+	"listbucket":"recipe-list",
+	"database_url":"127.0.0.1",
+    "database_user":"root",
+    "database_pass":"zbhxzz",
+    "database_name":"crawler_book",
+	"connectionLimit":"10",
+	"accesskey":"0ykNDM0uXCaqmnOe",
+	"accesssecret":"CQ9K47h0fxmJEWbTRFCN8OYM1qA7P4"
+}
