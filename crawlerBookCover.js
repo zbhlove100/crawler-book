@@ -63,7 +63,7 @@ function savepic(url,name){
 	    console.log(response.headers['content-type']) // 'image/png' 
 	  })
 	  .on('error', function(err) {
-	    console.log("------------------------------------------------error:"+error);
+	    console.log("------------------------------------------------error:"+err);
 		    	var emmitData = {
 		            	"url":url,
 		            	"name":name
