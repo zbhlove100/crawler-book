@@ -16,6 +16,7 @@
     "xml2js":"*",
     "mysql":"*",
     "request": "*",
-    "iconv":"*"
+    "iconv-lite":"*",
+    "bufferhelper":"*"
   }
 }
