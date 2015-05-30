@@ -80,7 +80,7 @@ function savepic(url,name){
 	  			console.log("down success:"+name);
             	setTimeout(function() {
 		                
-		        	ep.emit("finishwrite",id)
+		        	ep.emit("finishwrite",1000)
 
 		    	}, 100);
 	  		})
@@ -99,7 +99,7 @@ function crawlBookCover(start,step,crawlnumber){
         
       }
       var queryobj = {}
-      queryobj.sql = "select id,kuaidu_id from book where kuaidu_img = 0 order by id asc limit :start,:step";
+      queryobj.sql = "select id,kuaidu_id from book where kuaidu_img = 1 order by id asc limit :start,:step";
       queryobj.params = {"start":start,"step":step}
       console.log("event start to crawler! at start:"+start +"&&step:"+step)
       mysqlclient.query(
@@ -135,5 +135,5 @@ function crawlBookCover(start,step,crawlnumber){
       })
     
 }
-crawlBookCover(0,1,14062)
+crawlBookCover(0,1,500)
 ep.emit("finishwrite",1000)

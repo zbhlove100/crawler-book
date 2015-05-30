@@ -71,7 +71,7 @@ function saveCapture(kuaidu_id,cid_i){
 		            };
 		        	ep.emit("connectrefuse",emmitData)
 
-		    	}, 3000);
+		    	}, 100);
 		    }
 		}
 	var name = kuaidu_id + "-" + cid_i+".txt";
@@ -95,49 +95,29 @@ function saveCapture(kuaidu_id,cid_i){
 
 
 
-function savepic(url,name){
-
-	request
-	  .get(url)
-	  .on('response', function(response) {
-	    console.log(response.statusCode) // 200 
-	    console.log(response.headers['content-type']) // 'image/png' 
-	  })
-	  .on('error', function(err) {
-	    console.log("------------------------------------------------error:"+err);
-		    	var emmitData = {
-		            	"url":url,
-		            	"name":name
-		            };
-		    	setTimeout(function() {
-		        	ep.emit("connectrefuse",emmitData)
-
-		    	}, 3000);
-	  })
-	  .pipe(fs.createWriteStream("./bookcover/"+name).on('error',function(err){
-            console.log("writeFile fail");
-            })
-	  		.on('close',function(){
-	  			console.log("down success:"+name);
-            	setTimeout(function() {
-		                
-		        	ep.emit("finishwrite",1000)
-
-		    	}, 100);
-	  		})
-	  	)
-}
-
 
 function crawlCapture(start,step,crawlnumber){
 	var offset = offset;
 	var cate = 1400;
 	var coverurl = "http://file.qreader.me/cover.php?id=";
-    ep.tail("finishwrite",function(){
+	vote = 0;
+	ep.tail("finishwrite",function(data){
+		vote = vote +1;
+		console.log("------------------------------------------------vote1!!!!!");
+		if(vote == step){
+			vote = 0;
+			console.log("------------------------------------------------All--vote!!!!!");
+			ep.emit("finishtrunk",1000)
+
+		}
+        
+      })
+
+    ep.tail("finishtrunk",function(){
 
       if(start >= crawlnumber){
-      	ep.emit("finishwrite",1000)
-        
+      	ep.emit("allfinish",1000)
+        return false;
       }
       var queryobj = {}
       queryobj.sql = "select id,kuaidu_id,cid_i from book_catalog order by id asc limit :start,:step";
@@ -155,7 +135,6 @@ function crawlCapture(start,step,crawlnumber){
 		          _.each(rows,function(obj,index){
 		          		var bookid = obj.kuaidu_id;
 		          		console.log("---------------------------------------------mysql---bookid:"+bookid);
-		          		var imgname = bookid+".jpg"
 		          		saveCapture(bookid,obj.cid_i)
 		          })
             	
@@ -171,10 +150,11 @@ function crawlCapture(start,step,crawlnumber){
         saveCapture(kuaidu_id,cid_i)
       })
 
-    ep.tail("catefinish",function(){
+    ep.tail("allfinish",function(){
         console.log("------------------------------------------------all finish!!!!!!!!!!!!!");
+        return false;
       })
     
 }
-crawlCapture(0,1,50)
-ep.emit("finishwrite",1000)
+crawlCapture(0,10,100)
+ep.emit("finishtrunk",1000)
