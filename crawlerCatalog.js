@@ -163,9 +163,10 @@ function crawlBookCatalog(start,step,crawlnumber){
     ep.tail("allfinish",function(){
         console.log("------------------------------------------------all finish!!!!!!!!!!!!!");
         return false;
+        process.exit();
       })
     
 }
 //crawlBookCatalog(0,1,14062)
-crawlBookCatalog(5868,1,14063)
+crawlBookCatalog(14062,1,14063)
 ep.emit("finishwrite",1000)

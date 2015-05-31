@@ -158,6 +158,7 @@ function crawlBookDetail(start,step,crawlnumber){
     ep.tail("allfinish",function(){
         console.log("------------------------------------------------all finish!!!!!!!!!!!!!");
         return false;
+        process.exit();
       })
     
 }

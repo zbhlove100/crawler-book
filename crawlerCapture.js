@@ -120,7 +120,7 @@ function crawlCapture(start,step,crawlnumber){
         return false;
       }
       var queryobj = {}
-      queryobj.sql = "select id,kuaidu_id,cid_i from book_catalog order by id asc limit :start,:step";
+      queryobj.sql = "select id,kuaidu_id,cid_i from catalog_list order by id asc limit :start,:step";
       queryobj.params = {"start":start,"step":step}
       console.log("event start to crawler! at start:"+start +"&&step:"+step)
       mysqlclient.query(
@@ -152,7 +152,7 @@ function crawlCapture(start,step,crawlnumber){
 
     ep.tail("allfinish",function(){
         console.log("------------------------------------------------all finish!!!!!!!!!!!!!");
-        return false;
+        process.exit();
       })
     
 }

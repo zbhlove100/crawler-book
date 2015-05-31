@@ -201,6 +201,7 @@ function crawlBooklist(offset){
     //   })
     ep.tail("catefinish",function(){
         console.log("------------------------------------------------all finish!!!!!!!!!!!!!");
+        process.exit();
       })
     
 }

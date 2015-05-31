@@ -132,6 +132,7 @@ function crawlBookCover(start,step,crawlnumber){
 
     ep.tail("catefinish",function(){
         console.log("------------------------------------------------all finish!!!!!!!!!!!!!");
+        process.exit();
       })
     
 }
