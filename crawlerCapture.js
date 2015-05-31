@@ -27,7 +27,7 @@ function countLog(){
   }
 }
 
-function saveCapture(kuaidu_id,cid_i){
+function saveCapture(kuaidu_id,cid_i,dirpath){
 	
 			  	
 	var postData = {
@@ -76,11 +76,11 @@ function saveCapture(kuaidu_id,cid_i){
 		}
 	var name = kuaidu_id + "-" + cid_i+".txt";
 	request(options, callback)
-	.pipe(fs.createWriteStream("./captures/"+name).on('error',function(err){
+	.pipe(fs.createWriteStream(dirpath+"/"+name	).on('error',function(err){
             console.log("writeFile fail");
             })
 	  		.on('close',function(){
-	  			console.log("write success:--------------------------->"+name);
+	  			console.log("write success:--------------------------->"+dirpath+name);
             	setTimeout(function() {
 		                
 		        	ep.emit("finishwrite",1000)
@@ -94,13 +94,28 @@ function saveCapture(kuaidu_id,cid_i){
 }
 
 
+function checkToChangeDir(currentrow,startrow,changepoint){
+	var checknum = parseInt(currentrow)-parseInt(startrow);
+	var result = false;
+	if(checknum!=0){
+		if(checknum%parseInt(changepoint)==0){
+			result = true;
+		}
+	}
+	return result;
+}
 
-
-function crawlCapture(start,step,crawlnumber){
+function crawlCapture(start,step,crawlnumber,changepoint,dirstartnum){
+	var startrow = start;
+	var dirnumber = dirstartnum;
+	var dirpath = "/home/zhangbohan/workspace/myproject/crawler-book/capturesdir/captures"
+	var currentdir = dirpath + "-" + dirstartnum;
 	var offset = offset;
 	var cate = 1400;
 	var coverurl = "http://file.qreader.me/cover.php?id=";
 	vote = 0;
+	mkdir(currentdir);
+	
 	ep.tail("finishwrite",function(data){
 		vote = vote +1;
 		console.log("------------------------------------------------vote1!!!!!");
@@ -114,7 +129,12 @@ function crawlCapture(start,step,crawlnumber){
       })
 
     ep.tail("finishtrunk",function(){
-
+      if(checkToChangeDir(start,startrow,changepoint)){
+      	dirnumber = dirnumber + 1;
+        mkdir(dirpath+"-"+dirnumber)
+        currentdir = dirpath+"-"+dirnumber;
+        console.log("------------------------------------------------changedir!!!!!");
+      }
       if(start >= crawlnumber){
       	ep.emit("allfinish",1000)
         return false;
@@ -135,7 +155,7 @@ function crawlCapture(start,step,crawlnumber){
 		          _.each(rows,function(obj,index){
 		          		var bookid = obj.kuaidu_id;
 		          		console.log("---------------------------------------------mysql---bookid:"+bookid);
-		          		saveCapture(bookid,obj.cid_i)
+		          		saveCapture(bookid,obj.cid_i,currentdir)
 		          })
             	
             }
@@ -147,14 +167,39 @@ function crawlCapture(start,step,crawlnumber){
 	ep.tail("connectrefuse",function(data){
     	var cid_i = data.cid_i;
     	var kuaidu_id = data.kuaidu_id;
-        saveCapture(kuaidu_id,cid_i)
+        saveCapture(kuaidu_id,cid_i,currentdir)
       })
-
     ep.tail("allfinish",function(){
         console.log("------------------------------------------------all finish!!!!!!!!!!!!!");
         process.exit();
       })
     
 }
-crawlCapture(0,10,100)
+
+var fs = require('fs');  
+var path = require('path');  
+//使用时第二个参数可以忽略  
+function mkdir(dirpath,dirname){  
+        //判断是否是第一次调用  
+        if(typeof dirname === "undefined"){   
+            if(fs.existsSync(dirpath)){  
+                return;  
+            }else{  
+                mkdir(dirpath,path.dirname(dirpath));  
+            }  
+        }else{  
+            //判断第二个参数是否正常，避免调用时传入错误参数  
+            if(dirname !== path.dirname(dirpath)){   
+                mkdir(dirpath);  
+                return;  
+            }  
+            if(fs.existsSync(dirname)){  
+                fs.mkdirSync(dirpath)  
+            }else{  
+                mkdir(dirname,path.dirname(dirname));  
+                fs.mkdirSync(dirpath);  
+            }  
+        }  
+}  
+crawlCapture(0,10,100,10,1)
 ep.emit("finishtrunk",1000)
